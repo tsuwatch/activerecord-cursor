@@ -3,7 +3,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'active_record/cursor/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'activerecord-cursor'
+  spec.name          = 'active_record-cursor'
   spec.version       = ActiveRecord::Cursor::VERSION
   spec.authors       = ['Tomohiro Suwa']
   spec.email         = ['neoen.gsn@gmail.com']
