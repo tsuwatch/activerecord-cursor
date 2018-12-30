@@ -6,13 +6,10 @@ describe ActiveRecord::Cursor do
   it { expect(Post).to respond_to(:cursor_page) }
 
   describe '.cursor_page' do
-    let(:created_at) { Time.now }
-    let!(:post0) do
-      Post.create(score: 0, published: true, created_at: created_at)
-    end
-    let!(:post1) { Post.create(score: 1) }
-    let!(:post11) { Post.create(score: 1, published: true) }
-    let!(:post2) { Post.create(score: 2) }
+    let!(:post0) { Post.create(score: 0, published: true) }
+    let!(:post1) { Post.create(score: 1, created_at: 1.day.after) }
+    let!(:post11) { Post.create(score: 1, published: true, created_at: 2.day.after) }
+    let!(:post2) { Post.create(score: 2, created_at: 3.day.after) }
 
     it { expect(Post.cursor_page).to eq [post0] }
 
@@ -21,12 +18,6 @@ describe ActiveRecord::Cursor do
         expect(
           Post.where(published: true).cursor_page(key: :created_at)
         ).to eq [post0]
-        expect(
-          YAML.safe_load(
-            Base64.urlsafe_decode64(Post.cursor_start),
-            [Symbol, Time]
-          )
-        ).to eq(id: 1, key: created_at)
         expect(
           Post.where(published: true).cursor_page(
             key: :created_at,
