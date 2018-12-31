@@ -28,13 +28,13 @@ Post.all
   #<Post id: 3, published: true, score: 1, created_at: "2018-12-30 19:38:29", updated_at: "2018-12-30 19:38:29">,
   #<Post id: 4, published: false, score: 2, created_at: "2018-12-30 19:38:30", updated_at: "2018-12-30 19:38:30">
 ]
-Post.cursor_page(key: :created_at)
-=> [#<Post id: 1, created_at: "2018-12-30 19:38:27", updated_at: "2018-12-30 19:38:27">]
-Post.where(published: true).cursor_page(key: :created_at, reverse: true)
+Post.cursor(key: :created_at)
+=> [#<Post id: 1, published: false, created_at: "2018-12-30 19:38:27", updated_at: "2018-12-30 19:38:27">]
+Post.where(published: true).cursor(key: :created_at, reverse: true)
 => [#<Post id: 3, published: true, score: 1, created_at: "2018-12-30 19:38:29", updated_at: "2018-12-30 19:38:29">]
-Post.where(published: true).cursor_page(key: :created_at, reverse: true, start: Post.cursor_start) # Get next page
+Post.where(published: true).cursor(key: :created_at, reverse: true, start: Post.next_cursor) # Get next page
 => [#<Post id: 1, published: true, score: 0, created_at: "2018-12-30 19:38:27", updated_at: "2018-12-30 19:38:27">]
-Post.where(published: true).cursor_page(key: :created_at, reverse: true, stop: Post.cursor_stop) # Get previous page
+Post.where(published: true).cursor(key: :created_at, reverse: true, stop: Post.prev_cursor) # Get previous page
 => [#<Post id: 3, published: true, score: 1, created_at: "2018-12-30 19:38:29", updated_at: "2018-12-30 19:38:29">]
 ```
 

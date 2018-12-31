@@ -1,27 +1,31 @@
 require 'spec_helper'
 
 describe ActiveRecord::Cursor do
-  class Post < ActiveRecord::Base; end
+  class ApplicationRecord < ActiveRecord::Base
+    self.abstract_class = true
+  end
 
-  it { expect(Post).to respond_to(:cursor_page) }
+  class Post < ApplicationRecord; end
 
-  describe '.cursor_page' do
+  it { expect(Post).to respond_to(:cursor) }
+
+  describe '.cursor' do
     let!(:post0) { Post.create(score: 0, published: true) }
     let!(:post1) { Post.create(score: 1, created_at: 1.day.after) }
     let!(:post11) { Post.create(score: 1, published: true, created_at: 2.day.after) }
     let!(:post2) { Post.create(score: 2, created_at: 3.day.after) }
 
-    it { expect(Post.cursor_page).to eq [post0] }
+    it { expect(Post.cursor).to eq [post0] }
 
     context 'key created_at' do
       it do
         expect(
-          Post.where(published: true).cursor_page(key: :created_at)
+          Post.where(published: true).cursor(key: :created_at)
         ).to eq [post0]
         expect(
-          Post.where(published: true).cursor_page(
+          Post.where(published: true).cursor(
             key: :created_at,
-            start: Post.cursor_start
+            start: Post.next_cursor
           )
         ).to eq [post11]
       end
@@ -29,18 +33,12 @@ describe ActiveRecord::Cursor do
 
     context 'key score' do
       it do
-        expect(Post.cursor_page(key: :score)).to eq [post0]
+        expect(Post.cursor(key: :score)).to eq [post0]
+        expect(Post.prev_cursor).to eq nil
         expect(
-          YAML.safe_load(
-            Base64.urlsafe_decode64(Post.cursor_start),
-            [Symbol]
-          )
-        ).to eq(id: 1, key: 0)
-        expect(Post.cursor_stop).to eq nil
-        expect(
-          Post.cursor_page(
+          Post.cursor(
             key: :score,
-            start: Post.cursor_start
+            start: Post.next_cursor
           )
         ).to eq [post1]
       end
@@ -48,7 +46,7 @@ describe ActiveRecord::Cursor do
       context 'same score' do
         it do
           expect(
-            Post.cursor_page(
+            Post.cursor(
               key: :score,
               start: Base64.urlsafe_encode64({
                 id: post1.id,
@@ -61,23 +59,23 @@ describe ActiveRecord::Cursor do
 
       context 'reverse true' do
         it do
-          expect(Post.cursor_page(key: :score, reverse: true)).to eq [post2]
+          expect(Post.cursor(key: :score, reverse: true)).to eq [post2]
           expect(
             YAML.safe_load(
-              Base64.urlsafe_decode64(Post.cursor_start),
+              Base64.urlsafe_decode64(Post.next_cursor),
               [Symbol]
             )
           ).to eq(id: 4, key: 2)
-          expect(Post.cursor_stop).to eq nil
+          expect(Post.prev_cursor).to eq nil
           expect(
-            Post.cursor_page(
+            Post.cursor(
               key: :score,
               reverse: true,
-              start: Post.cursor_start
+              start: Post.next_cursor
             )
           ).to eq [post11]
           expect(
-            Post.cursor_page(key: :score, reverse: true, stop: Post.cursor_stop)
+            Post.cursor(key: :score, reverse: true, stop: Post.prev_cursor)
           ).to eq [post2]
         end
       end
