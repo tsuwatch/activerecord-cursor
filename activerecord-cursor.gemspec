@@ -1,9 +1,9 @@
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'active_record/cursor/version'
+require 'activerecord/cursor/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'active_record-cursor'
+  spec.name          = 'activerecord-cursor'
   spec.version       = ActiveRecord::Cursor::VERSION
   spec.authors       = ['Tomohiro Suwa']
   spec.email         = ['neoen.gsn@gmail.com']

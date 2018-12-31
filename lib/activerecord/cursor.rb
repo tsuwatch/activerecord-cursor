@@ -1,5 +1,4 @@
-require 'active_record/cursor/version'
-require 'active_record'
+require 'activerecord/cursor/version'
 
 module ActiveRecord
   module Cursor

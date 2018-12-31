@@ -1,5 +1,5 @@
 $LOAD_PATH.unshift File.expand_path '../lib', __dir__
-require 'active_record-cursor'
+require 'activerecord-cursor'
 
 ActiveRecord::Base.establish_connection(
   adapter: 'sqlite3',
