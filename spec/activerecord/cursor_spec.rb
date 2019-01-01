@@ -33,14 +33,22 @@ describe ActiveRecord::Cursor do
 
     context 'key score' do
       it do
-        expect(Post.cursor(key: :score)).to eq [post0]
+        expect(Post.cursor(key: :score, size: 2)).to eq [post0, post1]
         expect(Post.prev_cursor).to eq nil
         expect(
           Post.cursor(
             key: :score,
+            size: 2,
             start: Post.next_cursor
           )
-        ).to eq [post1]
+        ).to eq [post11, post2]
+        expect(
+          Post.cursor(
+            key: :score,
+            size: 2,
+            stop: Post.prev_cursor
+          )
+        ).to eq [post0, post1]
       end
 
       context 'same score' do
@@ -59,24 +67,20 @@ describe ActiveRecord::Cursor do
 
       context 'reverse true' do
         it do
-          expect(Post.cursor(key: :score, reverse: true)).to eq [post2]
-          expect(
-            YAML.safe_load(
-              Base64.urlsafe_decode64(Post.next_cursor),
-              [Symbol]
-            )
-          ).to eq(id: 4, key: 2)
+          expect(Post.cursor(key: :score, size: 2, reverse: true)).to eq [post2, post11]
+          expect(ActiveRecord::Cursor::Params.decode(Post.next_cursor).value).to eq('id' => 3, 'key' => 1)
           expect(Post.prev_cursor).to eq nil
           expect(
             Post.cursor(
               key: :score,
+              size: 2,
               reverse: true,
               start: Post.next_cursor
             )
-          ).to eq [post11]
+          ).to eq [post1, post0]
           expect(
-            Post.cursor(key: :score, reverse: true, stop: Post.prev_cursor)
-          ).to eq [post2]
+            Post.cursor(key: :score, size: 2, reverse: true, stop: Post.prev_cursor)
+          ).to eq [post2, post11]
         end
       end
     end
