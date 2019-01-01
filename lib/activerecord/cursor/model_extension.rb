@@ -42,7 +42,7 @@ module ActiveRecord
         end
 
         def in_order
-          reorder("#{column} #{by}", "#{table_name}.id #{by}")
+          order("#{column} #{by}", "#{table_name}.id #{by}")
         end
 
         private
@@ -101,9 +101,8 @@ module ActiveRecord
           record = @records[0]
           @next = generate_cursor(record) if record
           size = @records.size
-          @records = @records.limit(@options[:size]).sort do |a, b|
-            b.public_send(@options[:key]) <=> a.public_send(@options[:key])
-          end
+          reverse_by = by == 'asc' ? 'desc' : 'asc'
+          @records = @records.reorder("#{column} #{reverse_by}").limit(@options[:size])
           return unless size == @options[:size] + 1
 
           @prev = generate_cursor(record)
