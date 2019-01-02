@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Tomohiro Suwa']
   spec.email         = ['neoen.gsn@gmail.com']
 
-  spec.summary       = 'pagination using cursors for ActiveRecord'
-  spec.description   = 'pagination using cursors for ActiveRecord'
-  spec.homepage      = 'https://github.com/tsuwatch/activerecord-curosr'
+  spec.summary       = 'cursor pagination for ActiveRecord'
+  spec.description   = 'cursor pagination for ActiveRecord'
+  spec.homepage      = 'https://github.com/tsuwatch/activerecord-cursor'
 
   spec.files = `git ls-files -z`.split("\x0").reject do |f|
     f.match(%r{^(test|spec|features)/})
