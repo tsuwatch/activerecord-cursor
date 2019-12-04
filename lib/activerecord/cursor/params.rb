@@ -13,7 +13,9 @@ module ActiveRecord
         else
           new YAML.safe_load(
             Base64.urlsafe_decode64(cursor),
-            [Symbol, Time, ActiveSupport::TimeZone, ActiveSupport::TimeWithZone]
+            [Symbol, Time, ActiveSupport::TimeZone, ActiveSupport::TimeWithZone],
+            [],
+            true
           ).with_indifferent_access
         end
       rescue Psych::SyntaxError
